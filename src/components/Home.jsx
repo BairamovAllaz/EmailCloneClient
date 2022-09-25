@@ -6,7 +6,9 @@ import { FaUserCircle } from "react-icons/fa";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { InputBase } from "@material-ui/core";
 import { OutlinedInput, TextareaAutosize, Button } from "@mui/material";
+import io from "socket.io-client";
 import "./Style/home.css";
+
 function Home() {
   const { userName } = useParams();
   const [users, setusers] = useState([]);
@@ -45,9 +47,19 @@ function Home() {
       });
   }, []);
 
+  useEffect(() => {
+    const socket = io("ws://localhost:5100");
+    socket.on("message-added", newmessage => {
+      setReceviedMessages(newmessage.filter(a => a.ToUser == userName));
+      setSendedMessages(newmessage.filter(a => a.FromUser == userName));
+    });
+  }, []);
+
   const addMessage = () => {
-    if (sendUser == "") {
-      alert("Select an user");
+    if (sendUser === "" || tittle === "" || messsage === "") {
+      alert("Please fill all the fields");
+    } else if (sendUser === userName) {
+      alert("You cant send message to yourself");
     } else {
       const user = {
         toUser: sendUser,
@@ -71,7 +83,13 @@ function Home() {
           console.log(err);
         });
     }
+    clearFiedls();
   };
+
+  function clearFiedls() {
+    setTittle("");
+    setmessage("");
+  }
 
   return (
     <div>
@@ -99,7 +117,6 @@ function Home() {
               }}
               onChange={(e, value) => {
                 setsendUser(value.user_name);
-                console.log(value.user_name);
               }}
             />
           </Navbar.Brand>
@@ -154,12 +171,14 @@ function Home() {
                 onChange={e => {
                   setTittle(e.target.value);
                 }}
+                value={tittle}
               />
               <TextareaAutosize
                 style={{ width: "80%", marginTop: "20px", height: "150px" }}
                 onChange={e => {
                   setmessage(e.target.value);
                 }}
+                value={messsage}
               />
               <div
                 style={{
