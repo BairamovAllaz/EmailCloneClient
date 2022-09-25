@@ -6,6 +6,14 @@ import { FaUserCircle } from "react-icons/fa";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { InputBase } from "@material-ui/core";
 import { OutlinedInput, TextareaAutosize, Button } from "@mui/material";
+
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
 import io from "socket.io-client";
 import "./Style/home.css";
 
@@ -15,10 +23,21 @@ function Home() {
   const [sendUser, setsendUser] = useState("");
   const [tittle, setTittle] = useState("");
   const [messsage, setmessage] = useState("");
+  const [selected, setSelected] = useState("");
+  const [open, setOpen] = React.useState(false);
+
   const navigate = useNavigate();
 
   const [receviedMessages, setReceviedMessages] = useState([]);
   const [sendedMessages, setSendedMessages] = useState([]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const LogOut = () => {
     navigate("/");
@@ -39,8 +58,7 @@ function Home() {
     fetch("http://localhost:5100/api/getAllMessages")
       .then(data => data.json())
       .then(js => {
-        setReceviedMessages(js.filter(a => a.ToUser == userName));
-        setSendedMessages(js.filter(a => a.FromUser == userName));
+        filterMessages(js);
       })
       .catch(err => {
         console.log(err);
@@ -50,10 +68,14 @@ function Home() {
   useEffect(() => {
     const socket = io("ws://localhost:5100");
     socket.on("message-added", newmessage => {
-      setReceviedMessages(newmessage.filter(a => a.ToUser == userName));
-      setSendedMessages(newmessage.filter(a => a.FromUser == userName));
+      filterMessages(newmessage);
     });
   }, []);
+
+  function filterMessages(messages) {
+    setReceviedMessages(messages.filter(a => a.ToUser == userName));
+    setSendedMessages(messages.filter(a => a.FromUser == userName));
+  }
 
   const addMessage = () => {
     if (sendUser === "" || tittle === "" || messsage === "") {
@@ -134,7 +156,13 @@ function Home() {
               <h4 className="divright1h4">Recevied Messages</h4>
               <div className="n">
                 {receviedMessages.map(element => (
-                  <div className="MessageInfoo">
+                  <div
+                    className="MessageInfoo"
+                    onClick={() => {
+                      setSelected(element);
+                      console.log(element);
+                    }}
+                  >
                     <p className="MessageText">
                       <FaUserCircle style={{ fontSize: "30px" }} />
                       <span style={{ paddingLeft: "10px" }}>
@@ -150,7 +178,12 @@ function Home() {
               <h4 className="divright2h4">Sended Messages</h4>
               <div className="n">
                 {sendedMessages.map(element => (
-                  <div className="MessageInfoo">
+                  <div
+                    className="MessageInfoo"
+                    onClick={() => {
+                      setSelected(element);
+                    }}
+                  >
                     <p className="MessageText">
                       <FaUserCircle style={{ fontSize: "30px" }} />
                       <span style={{ paddingLeft: "10px" }}>
@@ -207,8 +240,10 @@ function Home() {
                   padding: "10px",
                 }}
               >
-                <p style={{ fontSize: "20px" }}>Title</p>
-                <p>FromTo</p>
+                <p style={{ fontSize: "20px" }}>{selected.MessageTittle}</p>
+                <p>
+                  From : {selected.FromUser + " ->"} To: {selected.ToUser}
+                </p>
               </div>
               <div
                 style={{
@@ -225,8 +260,12 @@ function Home() {
                     textAlign: "left",
                   }}
                 >
-                  <p style={{ paddingLeft: "10px" }}>Message</p>
-                  <p style={{ paddingLeft: "50px" }}>Reply</p>
+                  <p style={{ paddingLeft: "10px" }}>
+                    Message: {selected.MessageText}
+                  </p>
+                  <p style={{ paddingLeft: "50px" }} onClick={handleClickOpen}>
+                    Reply
+                  </p>
                 </div>
                 <h4>Replies</h4>
                 <div>
@@ -242,6 +281,27 @@ function Home() {
                     <p style={{ padding: "10px", marginTop: "-20px" }}>
                       fsasfashasklfhdsfsdkhdsf fsjfs;a sdfjsd
                     </p>
+                    <Dialog open={open} onClose={handleClose}>
+                      <DialogTitle>Send answer</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText>
+                          Enter good answer for this user:-
+                        </DialogContentText>
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="name"
+                          label="Message"
+                          type="text"
+                          fullWidth
+                          variant="standard"
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={handleClose}>Send</Button>
+                      </DialogActions>
+                    </Dialog>
                   </div>
                 </div>
               </div>
