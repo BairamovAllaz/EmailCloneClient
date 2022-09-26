@@ -133,6 +133,7 @@ function Home() {
     const loginUrl = "https://app-allazemail.herokuapp.com/api/addAnswer";
     fetch(loginUrl, {
       headers: {
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(message),
