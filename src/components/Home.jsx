@@ -43,7 +43,7 @@ function Home() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5100/api/getusers")
+    fetch("https://app-allazemail.herokuapp.com/api/getusers")
       .then(data => data.json())
       .then(js => {
         setusers(js);
@@ -54,7 +54,7 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:5100/api/getAllMessages")
+    fetch("https://app-allazemail.herokuapp.com/api/getAllMessages")
       .then(data => data.json())
       .then(js => {
         filterMessages(js);
@@ -65,7 +65,7 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    fetch(`http://localhost:5100/api/getAnswer/${selected.Id}`)
+    fetch(`https://app-allazemail.herokuapp.com/api/getAnswer/${selected.Id}`)
       .then(data => data.json())
       .then(js => {
         console.log(js);
@@ -77,7 +77,7 @@ function Home() {
   }, [selected]);
 
   useEffect(() => {
-    const socket = io("ws://localhost:5100");
+    const socket = io("ws://https://app-allazemail.herokuapp.com");
     socket.on("message-added", newmessage => {
       filterMessages(newmessage);
     });
@@ -100,7 +100,7 @@ function Home() {
         messageTitle: tittle,
         messageText: messsage,
       };
-      const loginUrl = "http://localhost:5100/api/addMessage";
+      const loginUrl = "https://app-allazemail.herokuapp.com/api/addMessage";
       fetch(loginUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +130,7 @@ function Home() {
       sendUser: userName,
       message: dialogText,
     };
-    const loginUrl = "http://localhost:5100/api/addAnswer";
+    const loginUrl = "https://app-allazemail.herokuapp.com/api/addAnswer";
     fetch(loginUrl, {
       headers: {
         "Content-Type": "application/json",
@@ -148,7 +148,7 @@ function Home() {
   }
 
   useEffect(() => {
-    const socket = io("ws://localhost:5100");
+    const socket = io("ws://https://app-allazemail.herokuapp.com");
     socket.on("answer-added", newanswer => {
       setAnswers(newanswer);
     });

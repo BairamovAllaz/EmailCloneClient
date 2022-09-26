@@ -9,7 +9,7 @@ function Enter() {
     const user =  {
       username: text
     }
-    const loginUrl = "http://localhost:5100/api/addUser";
+    const loginUrl = "https://app-allazemail.herokuapp.com/api/addUser";
     fetch(loginUrl, {
       headers: {
         "Content-Type": "application/json",
