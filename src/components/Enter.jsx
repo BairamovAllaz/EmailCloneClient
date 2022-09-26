@@ -12,6 +12,7 @@ function Enter() {
     const loginUrl = "https://app-allazemail.herokuapp.com/api/addUser";
     fetch(loginUrl, {
       headers: {
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(user),
