@@ -29,6 +29,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "peerDependencies": {
+  "@babel/core": "^7.0.0",
+  "react": ">=16.8.0"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
