@@ -218,23 +218,27 @@ function Home() {
           <div className="divleft">
             <div className="divright1">
               <h4 className="divright1h4">Recevied Messages</h4>
-              {receviedMessages.length <= 0 ? (
-                <div>
-                  <p style={{ marginTop: "30px" }}>No Recevied Messages</p>
-                </div>
-              ) : (
-                <div className="n">{init(receviedMessages, "recevied")}</div>
-              )}
+              <div className="scrolldiv">
+                {receviedMessages.length <= 0 ? (
+                  <div>
+                    <p style={{ marginTop: "30px" }}>No Recevied Messages</p>
+                  </div>
+                ) : (
+                  <div className="n">{init(receviedMessages, "recevied")}</div>
+                )}
+              </div>
             </div>
             <div className="divright2">
               <h4 className="divright2h4">Sended Messages</h4>
-              {sendedMessages.length <= 0 ? (
-                <div>
-                  <p style={{ marginTop: "30px" }}>No Sended Messages</p>
-                </div>
-              ) : (
-                <div className="n">{init(sendedMessages, "sended")}</div>
-              )}
+              <div className="scrolldiv">
+                {sendedMessages.length <= 0 ? (
+                  <div>
+                    <p style={{ marginTop: "30px" }}>No Sended Messages</p>
+                  </div>
+                ) : (
+                  <div className="n">{init(sendedMessages, "sended")}</div>
+                )}
+              </div>
             </div>
           </div>
           <div class="divright">
@@ -347,10 +351,17 @@ function Home() {
                       </Dialog>
                     </div>
                     <h4>Replies</h4>
-                    <div>
+                    <div
+                      className="RepliesDiv"
+                      style={{
+                        height: "250px",
+                        overflowY: "auto",
+                        marginTop: "10px",
+                      }}
+                    >
                       {answers.length <= 0 ? (
                         <div>
-                          <p style ={{marginTop : "10px"}}>No Replies</p>
+                          <p style={{ marginTop: "10px" }}>No Replies</p>
                         </div>
                       ) : (
                         <div>

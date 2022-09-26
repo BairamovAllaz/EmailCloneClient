@@ -22,15 +22,25 @@
 }
 .divright1{ 
     width: 100%;
-    height: 400px;
+    height: 50%;
     border: solid 2px black;
-    background-color:honeydew
+    background-color:honeydew;
+}
+
+.scrolldiv::-webkit-scrollbar {
+    display: none;
+}
+
+.scrolldiv  {
+    overflow-y: auto;
+    overflow-x: none;
+    height: 90%;
 }
 .divright2 {
     width: 100%;
-    height: 400px;
+    height: 50%;
     border: solid 2px black;
-    background-color: honeydew
+    background-color: honeydew;
 }
 
 .divright1h4{ 
@@ -60,7 +70,6 @@
 .n { 
     width: 100%;
     height: 300px;
-    overflow-y: auto;
 }
 
 .SendDiv{ 
@@ -69,4 +78,8 @@
     margin-top: 20px;
     margin-left: 80px;
     background-color: beige;
+}
+
+.RepliesDiv::-webkit-scrollbar { 
+    display: none;
 }
