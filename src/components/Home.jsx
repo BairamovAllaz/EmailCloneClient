@@ -24,8 +24,9 @@ function Home() {
   const [tittle, setTittle] = useState("");
   const [messsage, setmessage] = useState("");
   const [selected, setSelected] = useState("");
+  const [dialogText, setDialogText] = useState("");
   const [open, setOpen] = React.useState(false);
-
+  const [answers, setAnswers] = useState([]);
   const navigate = useNavigate();
 
   const [receviedMessages, setReceviedMessages] = useState([]);
@@ -64,6 +65,18 @@ function Home() {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:5100/api/getAnswer/${selected.Id}`)
+      .then(data => data.json())
+      .then(js => {
+        console.log(js);
+        setAnswers(js);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, [selected]);
 
   useEffect(() => {
     const socket = io("ws://localhost:5100");
@@ -112,6 +125,38 @@ function Home() {
     setTittle("");
     setmessage("");
   }
+
+  function sendAnswer() {
+    const message = {
+      messageId: selected.Id,
+      sendUser: userName,
+      message: dialogText,
+    };
+    const loginUrl = "http://localhost:5100/api/addAnswer";
+    fetch(loginUrl, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+      method: "POST",
+    })
+      .then(d => d.text())
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  
+  useEffect(() => {
+    const socket = io("ws://localhost:5100");
+    socket.on("answer-added", newanswer => {
+      setAnswers(newanswer);
+    });
+  }, []);
+
 
   return (
     <div>
@@ -269,40 +314,49 @@ function Home() {
                 </div>
                 <h4>Replies</h4>
                 <div>
-                  <div
-                    style={{
-                      width: "100%",
-                      minHeight: "70px",
-                      textAlign: "left",
-                      backgroundColor: "aliceblue",
-                    }}
-                  >
-                    <p style={{ padding: "10px" }}>Sender</p>
-                    <p style={{ padding: "10px", marginTop: "-20px" }}>
-                      fsasfashasklfhdsfsdkhdsf fsjfs;a sdfjsd
-                    </p>
-                    <Dialog open={open} onClose={handleClose}>
-                      <DialogTitle>Send answer</DialogTitle>
-                      <DialogContent>
-                        <DialogContentText>
-                          Enter good answer for this user:-
-                        </DialogContentText>
-                        <TextField
-                          autoFocus
-                          margin="dense"
-                          id="name"
-                          label="Message"
-                          type="text"
-                          fullWidth
-                          variant="standard"
-                        />
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleClose}>Send</Button>
-                      </DialogActions>
-                    </Dialog>
-                  </div>
+                  {answers.map(el => (
+                    <div
+                      style={{
+                        width: "100%",
+                        minHeight: "70px",
+                        textAlign: "left",
+                        backgroundColor: "aliceblue",
+                      }}
+                    >
+                      <p style={{ padding: "10px" }}>{el.sendUser}</p>
+                      <p style={{ padding: "10px", marginTop: "-20px" }}>
+                        {el.message}
+                      </p>
+                    </div>
+                  ))}
+
+                  <Dialog open={open} onClose={handleClose}>
+                    <DialogContent>
+                      <DialogContentText>
+                        Enter good answer for this user:-
+                      </DialogContentText>
+                      <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        onChange={e => setDialogText(e.target.value)}
+                      />
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleClose}>Cancel</Button>
+                      <Button
+                        onClick={() => {
+                          sendAnswer();
+                          handleClose();
+                        }}
+                      >
+                        Send
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </div>
               </div>
             </div>
