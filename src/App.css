@@ -1,7 +1,9 @@
 .App {
   text-align: center;
 }
-
+body{
+  background-color: #2b6777;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

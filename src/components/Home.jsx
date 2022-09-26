@@ -5,7 +5,6 @@ import Container from "react-bootstrap/Container";
 import { FaUserCircle } from "react-icons/fa";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { InputBase } from "@material-ui/core";
-import Modal from "./Modal";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -293,7 +292,7 @@ function Home() {
                       padding: "10px",
                     }}
                   >
-                    <p style={{ fontSize: "20px" }}>{selected.MessageTittle}</p>
+                    <p style={{ fontSize: "20px",fontWeight:"800" }}>{selected.MessageTittle}</p>
                     <p>
                       From : {selected.FromUser + " ->"} To: {selected.ToUser}
                     </p>
@@ -316,12 +315,17 @@ function Home() {
                       <p style={{ paddingLeft: "10px" }}>
                         Message: {selected.MessageText}
                       </p>
-                      <p
-                        style={{ paddingLeft: "50px" }}
+                      <Button
+                        style={{
+                          marginLeft: "50px",
+                          width: "40px",
+                          height: "30px",
+                        }}
                         onClick={handleClickOpen}
+                        variant="contained"
                       >
                         Reply
-                      </p>
+                      </Button>
                       <Dialog open={open} onClose={handleClose}>
                         <DialogContent>
                           <DialogContentText>
@@ -374,7 +378,11 @@ function Home() {
                                 backgroundColor: "aliceblue",
                               }}
                             >
-                              <p style={{ padding: "10px" }}>{el.sendUser}</p>
+                              <div style = {{display: "flex",padding: "10px"}}>
+                                <FaUserCircle style={{ fontSize: "25px" }} />
+                                <p style = {{paddingLeft :"7px"}}>{el.sendUser}</p>
+                                <p style = {{marginLeft:"auto"}}>{el.answerTime}</p>
+                              </div>
                               <p
                                 style={{ padding: "10px", marginTop: "-20px" }}
                               >
