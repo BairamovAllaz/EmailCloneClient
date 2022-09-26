@@ -5,14 +5,13 @@ import Container from "react-bootstrap/Container";
 import { FaUserCircle } from "react-icons/fa";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { InputBase } from "@material-ui/core";
-import { OutlinedInput, TextareaAutosize, Button } from "@mui/material";
-
+import Modal from "./Modal";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import { OutlinedInput, TextareaAutosize, Button } from "@mui/material";
 
 import io from "socket.io-client";
 import "./Style/home.css";
@@ -24,13 +23,17 @@ function Home() {
   const [tittle, setTittle] = useState("");
   const [messsage, setmessage] = useState("");
   const [selected, setSelected] = useState("");
-  const [dialogText, setDialogText] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [dialogText, setDialogText] = useState("");
   const [answers, setAnswers] = useState([]);
   const navigate = useNavigate();
 
   const [receviedMessages, setReceviedMessages] = useState([]);
   const [sendedMessages, setSendedMessages] = useState([]);
+
+  const LogOut = () => {
+    navigate("/");
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -38,10 +41,6 @@ function Home() {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const LogOut = () => {
-    navigate("/");
   };
 
   useEffect(() => {
@@ -149,7 +148,6 @@ function Home() {
       });
   }
 
-  
   useEffect(() => {
     const socket = io("ws://localhost:5100");
     socket.on("answer-added", newanswer => {
@@ -157,6 +155,27 @@ function Home() {
     });
   }, []);
 
+  function init(messages, type) {
+    return messages.map(element => (
+      <div
+        className="MessageInfoo"
+        onClick={() => {
+          setSelected(element);
+          console.log(element);
+        }}
+      >
+        <p className="MessageText">
+          <FaUserCircle style={{ fontSize: "30px" }} />
+          <span style={{ paddingLeft: "10px" }}>
+            {type === "recevied"
+              ? "From : " + element.FromUser
+              : "To: " + element.ToUser}
+          </span>
+          <p className="MessageTextIn">{element.MessageTittle}</p>
+        </p>
+      </div>
+    ));
+  }
 
   return (
     <div>
@@ -199,46 +218,23 @@ function Home() {
           <div className="divleft">
             <div className="divright1">
               <h4 className="divright1h4">Recevied Messages</h4>
-              <div className="n">
-                {receviedMessages.map(element => (
-                  <div
-                    className="MessageInfoo"
-                    onClick={() => {
-                      setSelected(element);
-                      console.log(element);
-                    }}
-                  >
-                    <p className="MessageText">
-                      <FaUserCircle style={{ fontSize: "30px" }} />
-                      <span style={{ paddingLeft: "10px" }}>
-                        {element.FromUser}
-                      </span>
-                      <p className="MessageTextIn">{element.MessageTittle}</p>
-                    </p>
-                  </div>
-                ))}
-              </div>
+              {receviedMessages.length <= 0 ? (
+                <div>
+                  <p style={{ marginTop: "30px" }}>No Recevied Messages</p>
+                </div>
+              ) : (
+                <div className="n">{init(receviedMessages, "recevied")}</div>
+              )}
             </div>
             <div className="divright2">
               <h4 className="divright2h4">Sended Messages</h4>
-              <div className="n">
-                {sendedMessages.map(element => (
-                  <div
-                    className="MessageInfoo"
-                    onClick={() => {
-                      setSelected(element);
-                    }}
-                  >
-                    <p className="MessageText">
-                      <FaUserCircle style={{ fontSize: "30px" }} />
-                      <span style={{ paddingLeft: "10px" }}>
-                        {element.ToUser}
-                      </span>
-                      <p className="MessageTextIn">{element.MessageTittle}</p>
-                    </p>
-                  </div>
-                ))}
-              </div>
+              {sendedMessages.length <= 0 ? (
+                <div>
+                  <p style={{ marginTop: "30px" }}>No Sended Messages</p>
+                </div>
+              ) : (
+                <div className="n">{init(sendedMessages, "sended")}</div>
+              )}
             </div>
           </div>
           <div class="divright">
@@ -265,7 +261,9 @@ function Home() {
                   alignContent: "right",
                 }}
               >
-                <p style={{ marginRight: "80px", marginTop: "30px" }}>User</p>
+                <p style={{ marginRight: "80px", marginTop: "30px" }}>
+                  {sendUser == "" ? "Select an user" : sendUser}
+                </p>
                 <Button
                   variant="contained"
                   style={{ marginRight: "80px", marginTop: "20px" }}
@@ -277,88 +275,108 @@ function Home() {
             </div>
 
             <div className="SendDiv">
-              <div
-                style={{
-                  width: "100%",
-                  height: "90px",
-                  textAlign: "left",
-                  padding: "10px",
-                }}
-              >
-                <p style={{ fontSize: "20px" }}>{selected.MessageTittle}</p>
-                <p>
-                  From : {selected.FromUser + " ->"} To: {selected.ToUser}
-                </p>
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  height: "0px",
-                  border: "solid 1px black",
-                }}
-              ></div>
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    marginTop: "20px",
-                    textAlign: "left",
-                  }}
-                >
-                  <p style={{ paddingLeft: "10px" }}>
-                    Message: {selected.MessageText}
-                  </p>
-                  <p style={{ paddingLeft: "50px" }} onClick={handleClickOpen}>
-                    Reply
-                  </p>
-                </div>
-                <h4>Replies</h4>
+              {selected === "" ? (
                 <div>
-                  {answers.map(el => (
+                  <h4 style={{ paddingTop: "20px" }}>No selected Messsage</h4>
+                </div>
+              ) : (
+                <div>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "90px",
+                      textAlign: "left",
+                      padding: "10px",
+                    }}
+                  >
+                    <p style={{ fontSize: "20px" }}>{selected.MessageTittle}</p>
+                    <p>
+                      From : {selected.FromUser + " ->"} To: {selected.ToUser}
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "0px",
+                      border: "solid 1px black",
+                    }}
+                  ></div>
+                  <div>
                     <div
                       style={{
-                        width: "100%",
-                        minHeight: "70px",
+                        display: "flex",
+                        marginTop: "20px",
                         textAlign: "left",
-                        backgroundColor: "aliceblue",
                       }}
                     >
-                      <p style={{ padding: "10px" }}>{el.sendUser}</p>
-                      <p style={{ padding: "10px", marginTop: "-20px" }}>
-                        {el.message}
+                      <p style={{ paddingLeft: "10px" }}>
+                        Message: {selected.MessageText}
                       </p>
-                    </div>
-                  ))}
-
-                  <Dialog open={open} onClose={handleClose}>
-                    <DialogContent>
-                      <DialogContentText>
-                        Enter good answer for this user:-
-                      </DialogContentText>
-                      <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                        onChange={e => setDialogText(e.target.value)}
-                      />
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handleClose}>Cancel</Button>
-                      <Button
-                        onClick={() => {
-                          sendAnswer();
-                          handleClose();
-                        }}
+                      <p
+                        style={{ paddingLeft: "50px" }}
+                        onClick={handleClickOpen}
                       >
-                        Send
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
+                        Reply
+                      </p>
+                      <Dialog open={open} onClose={handleClose}>
+                        <DialogContent>
+                          <DialogContentText>
+                            Enter good answer for this user:-
+                          </DialogContentText>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            type="text"
+                            fullWidth
+                            variant="standard"
+                            onChange={e => setDialogText(e.target.value)}
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleClose}>Cancel</Button>
+                          <Button
+                            onClick={() => {
+                              sendAnswer();
+                              handleClose();
+                            }}
+                          >
+                            Send
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div>
+                    <h4>Replies</h4>
+                    <div>
+                      {answers.length <= 0 ? (
+                        <div>
+                          <p style ={{marginTop : "10px"}}>No Replies</p>
+                        </div>
+                      ) : (
+                        <div>
+                          {answers.map(el => (
+                            <div
+                              style={{
+                                width: "100%",
+                                minHeight: "70px",
+                                textAlign: "left",
+                                backgroundColor: "aliceblue",
+                              }}
+                            >
+                              <p style={{ padding: "10px" }}>{el.sendUser}</p>
+                              <p
+                                style={{ padding: "10px", marginTop: "-20px" }}
+                              >
+                                {el.message}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
