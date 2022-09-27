@@ -77,7 +77,7 @@ function Home() {
   }, [selected]);
 
   useEffect(() => {
-    const socket = io("ws://https://app-allazemail.herokuapp.com");
+    const socket = io("https://app-allazemail.herokuapp.com");
     socket.on("message-added", newmessage => {
       filterMessages(newmessage);
     });
@@ -154,7 +154,7 @@ function Home() {
   }
 
   useEffect(() => {
-    const socket = io("ws://https://app-allazemail.herokuapp.com");
+    const socket = io("https://app-allazemail.herokuapp.com");
     socket.on("answer-added", newanswer => {
       setAnswers(newanswer);
     });
