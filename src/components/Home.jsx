@@ -102,7 +102,10 @@ function Home() {
       };
       const loginUrl = "https://app-allazemail.herokuapp.com/api/addMessage";
       fetch(loginUrl, {
+        credentials: "same-origin",
+        withCredentials: true,
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
@@ -132,6 +135,8 @@ function Home() {
     };
     const loginUrl = "https://app-allazemail.herokuapp.com/api/addAnswer";
     fetch(loginUrl, {
+      credentials: "same-origin",
+      withCredentials: true,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
