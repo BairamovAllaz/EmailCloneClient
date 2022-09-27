@@ -91,8 +91,6 @@ function Home() {
   const addMessage = () => {
     if (sendUser === "" || tittle === "" || messsage === "") {
       alert("Please fill all the fields");
-    } else if (sendUser === userName) {
-      alert("You cant send message to yourself");
     } else {
       const user = {
         toUser: sendUser,
